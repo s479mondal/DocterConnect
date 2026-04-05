@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # Infrastructure
+  mongodb:
+    image: mongo:7.0
+    container_name: dpm-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    networks:
+      - dpm-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dpm-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - dpm-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: dpm-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    networks:
+      - dpm-network
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: dpm-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_SERVICE_URL=http://user-service:3001
+      - DOCTOR_SERVICE_URL=http://doctor-service:3002
+      - APPOINTMENT_SERVICE_URL=http://appointment-service:3003
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3004
+      - JWT_SECRET=dpm_jwt_secret_key_2024
+    depends_on:
+      - user-service
+      - doctor-service
+      - appointment-service
+      - notification-service
+    networks:
+      - dpm-network
+
+  # Microservices
+  user-service:
+    build: ./services/user-service
+    container_name: dpm-user-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/user_db?retryWrites=true&w=majority
+      - JWT_SECRET=dpm_jwt_secret_key_2024
+      - JWT_EXPIRES_IN=7d
+      - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - dpm-network
+
+  doctor-service:
+    build: ./services/doctor-service
+    container_name: dpm-doctor-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/doctor_db?retryWrites=true&w=majority
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    networks:
+      - dpm-network
+
+  appointment-service:
+    build: ./services/appointment-service
+    container_name: dpm-appointment-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/appointment_db?retryWrites=true&w=majority
+      - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - DOCTOR_SERVICE_URL=http://doctor-service:3002
+      - USER_SERVICE_URL=http://user-service:3001
+      - RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
+      - RAZORPAY_KEY_SECRET=eU3taZ4ADVpI3HT3sfnjRfvf
+    depends_on:
+      - mongodb
+      - rabbitmq
+      - redis
+    networks:
+      - dpm-network
+
+
+  notification-service:
+    build: ./services/notification-service
+    container_name: dpm-notification-service
+    ports:
+      - "3004:3004"
+    environment:
+      - PORT=3004
+      - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=soumenmondal741150@gmail.com
+      - SMTP_PASS=qwdwsgvvgejcgijm
+    depends_on:
+      - rabbitmq
+    networks:
+      - dpm-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: dpm-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000/api
+      - VITE_RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
+    depends_on:
+      - api-gateway
+    networks:
+      - dpm-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  dpm-network:
+    driver: bridge

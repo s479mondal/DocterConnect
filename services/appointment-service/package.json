@@ -1,0 +1,26 @@
+{
+  "name": "appointment-service",
+  "version": "1.0.0",
+  "description": "Appointment Booking Service with Saga Pattern and Optimistic Locking",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-validator": "^7.2.0",
+    "ioredis": "^5.10.1",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0",
+    "razorpay": "^2.9.6",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
