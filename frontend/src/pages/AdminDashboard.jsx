@@ -245,7 +245,7 @@ const AdminDashboard = () => {
                               <div className="text-sm text-gray">{appt.timeSlot?.startTime} - {appt.timeSlot?.endTime}</div>
                             </td>
                             <td>{appt.patientName}</td>
-                            <td>Dr. {appt.doctorName} <br/><span className="text-sm text-gray">{appt.doctorSpecialization}</span></td>
+                            <td>{appt.doctorName?.startsWith('Dr.') ? appt.doctorName : `Dr. ${appt.doctorName}`} <br/><span className="text-sm text-gray">{appt.doctorSpecialization}</span></td>
                             <td className="capitalize text-sm">{appt.type}</td>
                             <td>
                               <span className={`status-badge ${appt.status}`}>

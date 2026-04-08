@@ -19,6 +19,11 @@ const appointmentSchema = new mongoose.Schema({
     required: true,
     index: true
   },
+  doctorUserId: {
+    type: String,
+    required: true,
+    index: true
+  },
   doctorName: {
     type: String,
     required: true

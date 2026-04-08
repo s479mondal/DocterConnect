@@ -62,7 +62,7 @@ exports.lockSlot = async (req, res) => {
         doctorId,
         patientId,
         date: new Date(date),
-        expiresAt: new Date(Date.now() + 2 * 60 * 1000) // Rule #2: 2 minutes from now
+        expiresAt: new Date(Date.now() + 1 * 60 * 1000) // Rule #2: 1 minute from now
       });
       await lock.save();
       
@@ -118,7 +118,7 @@ exports.bookAppointment = async (req, res) => {
     const patientId = req.headers['x-user-id'];
     const patientEmail = req.headers['x-user-email'] || '';
     const {
-      doctorId, doctorName, doctorSpecialization, patientName,
+      doctorId, doctorUserId, doctorName, doctorSpecialization, patientName,
       date, timeSlot, type, reason, consultationFee, slotId, consultationType,
       razorpay_payment_id, razorpay_order_id, razorpay_signature
     } = req.body;
@@ -166,6 +166,7 @@ exports.bookAppointment = async (req, res) => {
       patientName: patientName || 'Patient',
       patientEmail: patientEmail || '',
       doctorId,
+      doctorUserId,
       doctorName: doctorName || 'Doctor',
       doctorSpecialization: doctorSpecialization || '',
       date: new Date(date),
@@ -700,7 +701,7 @@ exports.addPrescription = async (req, res) => {
   try {
     const { id } = req.params;
     const { diagnosis, medicines, advice } = req.body;
-    const doctorId = req.headers['x-user-id'];
+    const doctorUserId = req.headers['x-user-id'];
 
     const appointment = await Appointment.findById(id);
 
@@ -709,7 +710,21 @@ exports.addPrescription = async (req, res) => {
     }
 
     // Verify requesting doctor owns this appointment
-    if (appointment.doctorId !== doctorId) {
+    // Compatibility: If doctorUserId is missing (legacy appointment), verify via doctor profile
+    if (!appointment.doctorUserId) {
+      try {
+        const docResponse = await axios.get(`${DOCTOR_SERVICE_URL}/api/doctors/${appointment.doctorId}`);
+        if (docResponse.data.doctor?.userId === doctorUserId) {
+          appointment.doctorUserId = doctorUserId;
+          await appointment.save();
+        } else {
+          return res.status(403).json({ error: 'Unauthorized: You are not the assigned doctor' });
+        }
+      } catch (err) {
+        logger.error('Legacy doctor verification failed:', err);
+        return res.status(403).json({ error: 'Unauthorized: Verification failed' });
+      }
+    } else if (appointment.doctorUserId !== doctorUserId) {
       return res.status(403).json({ error: 'Unauthorized: You are not the assigned doctor' });
     }
 

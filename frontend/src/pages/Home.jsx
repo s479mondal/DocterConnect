@@ -92,7 +92,7 @@ const Home = () => {
             <RiStethoscopeLine className="footer-icon" />
             <span>Doctor Appointment System</span>
           </div>
-          <p className="footer-text">© 2024 College Project - By Soumik Mandal</p>
+          <p className="footer-text">© 2026 - By Soumen Mondal, Soumik Mandal, Arith Basu, Parth Mandal and Tiyas Das</p>
         </div>
       </footer>
     </div>

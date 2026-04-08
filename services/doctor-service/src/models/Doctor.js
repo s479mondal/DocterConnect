@@ -48,7 +48,7 @@ const doctorSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    match: [/^[A-Z]{2}\d{2}\d{4}$/, 'Registration number must be in format XXYYZZZZ (e.g., AB241234)']
+    match: [/^[A-Z0-9-]{3,40}$/i, 'Registration number must be alphanumeric and between 3-40 characters (e.g., AB241234 or REG-12345)']
   },
   phone: {
     type: String,

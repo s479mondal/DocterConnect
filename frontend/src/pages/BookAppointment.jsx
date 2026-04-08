@@ -136,9 +136,9 @@ const BookAppointment = () => {
       });
       
       setSelectedSlot(slot);
-      setTimeLeft(120); // 2 minutes
+      setTimeLeft(60); // 1 minute
       setTimerActive(true);
-      toast.success('Slot held for 2 minutes! ✨');
+      toast.success('Slot held for 1 minute! ✨');
     } catch (error) {
       if (error.response?.status === 409) {
         toast.error(error.response.data.message || 'Slot conflict.');
@@ -171,7 +171,8 @@ const BookAppointment = () => {
     try {
       await appointmentAPI.book({
         doctorId,
-        doctorName: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+        doctorUserId: doctor.userId,
+        doctorName: `${doctor.firstName} ${doctor.lastName}`,
         doctorSpecialization: doctor.specialization,
         patientName: `${user.firstName} ${user.lastName}`,
         date: selectedDate,
@@ -256,16 +257,43 @@ const BookAppointment = () => {
               </div>
             </div>
 
-            {/* Time Slots */}
+            {/* Consultation Type - Moved here as Step 2 */}
+            <div className={`booking-section card ${selectedSlot ? 'section-locked' : ''}`}>
+              <h2><FiCheck /> 2. Mode of Visit</h2>
+              <div className="form-group" style={{marginTop: '1rem'}}>
+                <div className="consultation-type-selector grid-2">
+                  <div 
+                    className={`type-option glass ${consultationType === 'offline' ? 'active' : ''} ${selectedSlot ? 'disabled' : ''}`}
+                    onClick={() => !selectedSlot && setConsultationType('offline')}
+                  >
+                    <div className="type-icon"><FiSunrise /></div>
+                    <div className="type-info">
+                      <span className="type-title">In-Person</span>
+                      <span className="type-desc">At Clinic</span>
+                    </div>
+                  </div>
+                  <div 
+                    className={`type-option glass ${consultationType === 'online' ? 'active' : ''} ${selectedSlot ? 'disabled' : ''}`}
+                    onClick={() => !selectedSlot && setConsultationType('online')}
+                  >
+                    <div className="type-icon"><FiClock style={{color: 'var(--accent)'}} /></div>
+                    <div className="type-info">
+                      <span className="type-title">Video Call</span>
+                      <span className="type-desc">Online (+₹500)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Time Slots - Now Step 3 */}
             <div className="booking-section card">
               <div className="section-header-inline">
-                <h2><FiClock /> 2. Available Slots</h2>
+                <h2><FiClock /> 3. Available Slots</h2>
                 {timerActive && (
                   <div className="lock-timer pulse">
                     <FiClock /> {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-                    <button className="btn-release-inline" onClick={handleReleaseSlot}>
-                      Release Slot
-                    </button>
+                    <span className="lock-timer-text"> (Locked)</span>
                   </div>
                 )}
               </div>
@@ -311,9 +339,9 @@ const BookAppointment = () => {
               )}
             </div>
 
-            {/* Appointment Details */}
+            {/* Appointment Details - Step 4 */}
             <div className={`booking-section card ${!selectedSlot ? 'section-disabled' : ''}`}>
-              <h2>3. Appointment Details</h2>
+              <h2>4. Appointment Details</h2>
               <div className="form-group">
                 <label>Type of Consultation</label>
                 <select 
@@ -326,31 +354,6 @@ const BookAppointment = () => {
                   <option value="follow-up">Follow-up Visit</option>
                   <option value="check-up">Routine Check-up</option>
                 </select>
-              </div>
-              <div className="form-group">
-                <label>Mode of Visit</label>
-                <div className="consultation-type-selector grid-2">
-                  <div 
-                    className={`type-option glass ${consultationType === 'offline' ? 'active' : ''} ${!selectedSlot ? 'disabled' : ''}`}
-                    onClick={() => selectedSlot && setConsultationType('offline')}
-                  >
-                    <div className="type-icon"><FiSunrise /></div>
-                    <div className="type-info">
-                      <span className="type-title">In-Person</span>
-                      <span className="type-desc">At Clinic</span>
-                    </div>
-                  </div>
-                  <div 
-                    className={`type-option glass ${consultationType === 'online' ? 'active' : ''} ${!selectedSlot ? 'disabled' : ''}`}
-                    onClick={() => selectedSlot && setConsultationType('online')}
-                  >
-                    <div className="type-icon"><FiClock style={{color: 'var(--accent)'}} /></div>
-                    <div className="type-info">
-                      <span className="type-title">Video Call</span>
-                      <span className="type-desc">Online (+₹500)</span>
-                    </div>
-                  </div>
-                </div>
               </div>
               <div className="form-group">
                 <label>Reason for Appointment</label>

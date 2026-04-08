@@ -44,20 +44,34 @@ const initializeConsumers = async () => {
 
         if (data.role && data.role.toLowerCase() === 'doctor') {
           try {
-            const existing = await PendingDoctor.findOne({ userId: data.userId });
-            if (!existing) {
+            // Check if already in Doctor or PendingDoctor
+            const existingDoctor = await PendingDoctor.findOne({ userId: data.userId });
+            const confirmedDoctor = await require('../models/Doctor').findOne({ userId: data.userId });
+            
+            if (!existingDoctor && !confirmedDoctor) {
               await PendingDoctor.create({
                 userId: data.userId,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
-                registrationNumber: data.registrationNumber || `PENDING-${data.userId}`,
+                // Ensure registrationNumber matches regex if provided, otherwise generate a valid fallback
+                registrationNumber: (data.registrationNumber && /^[A-Z0-9-]{3,20}$/i.test(data.registrationNumber))
+                  ? data.registrationNumber 
+                  : `REG-${data.userId.slice(-8).toUpperCase()}`,
                 consultationFee: data.consultationFee || 0
               });
               logger.info(`Staged pending doctor: ${data.email}`);
+            } else {
+              logger.info(`Doctor already exists (pending or confirmed): ${data.email}. Skipping creation.`);
             }
           } catch (err) {
-            logger.error('Error creating pending doctor:', err);
+            logger.error('Error creating pending doctor record:', { 
+              error: err.message, 
+              stack: err.stack,
+              data: { email: data.email, userId: data.userId }
+            });
+            // If it's a validation error, we still ACK to avoid infinite loop, 
+            // but we've logged sufficiently to troubleshoot.
           }
         }
         channel.ack(msg);

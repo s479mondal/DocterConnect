@@ -112,7 +112,7 @@ const PatientDashboard = () => {
                     {appt.doctorName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </div>
                   <div className="appt-info">
-                    <h4>Dr. {appt.doctorName}</h4>
+                    <h4>{appt.doctorName?.startsWith('Dr.') ? appt.doctorName : `Dr. ${appt.doctorName}`}</h4>
                     <p className="appt-spec">{appt.doctorSpecialization || 'Specialist'}</p>
                     <div className="appt-time">
                       <FiCalendar /> {new Date(appt.date).toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })}
