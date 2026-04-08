@@ -23,6 +23,14 @@ exports.register = async (req, res) => {
   try {
     const { email, password, firstName, lastName, role, phone, dateOfBirth, gender, registrationNumber, consultationFee } = req.body;
 
+    // Validate password complexity
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        error: 'Password must be at least 6 characters long, contain at least one capital letter, one digit, and one special character' 
+      });
+    }
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

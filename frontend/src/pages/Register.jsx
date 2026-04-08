@@ -20,6 +20,23 @@ const Register = () => {
       toast.error('Passwords do not match');
       return;
     }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      toast.error('Password must be at least 6 characters, contain 1 capital letter, 1 digit, and 1 special character');
+      return;
+    }
+
+    // Doctor registration number validation
+    if (formData.role === 'doctor') {
+      const regRegex = /^[A-Z]{2}\d{2}\d{4}$/;
+      if (!regRegex.test(formData.registrationNumber)) {
+        toast.error('Gov Reg Number must be 2 capital letters, 2 digit year, and 4 digit sequence (e.g., AB241234)');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       const { confirmPassword, ...data } = formData;
