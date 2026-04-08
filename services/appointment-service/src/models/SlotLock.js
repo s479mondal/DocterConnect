@@ -30,10 +30,6 @@ const slotLockSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Compound unique index to prevent multiple locks on same slot
-slotLockSchema.index(
-  { doctorId: 1, date: 1, startTime: 1 },
-  { unique: true }
-);
+// Note: Unique constraint is enforced by the deterministic slotId field
 
 module.exports = mongoose.model('SlotLock', slotLockSchema);

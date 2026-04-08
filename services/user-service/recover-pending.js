@@ -11,8 +11,8 @@ async function recoverDoctors() {
     const doctorDb = mongoose.connection.useDb('doctor_db');
 
     // 1. Find all inactive doctors in user_db
-    const allDoctors = await userDb.collection('users').find({ role: 'doctor', isActive: false }).toArray();
-    console.log(`Found ${allDoctors.length} inactive doctors in user_db.`);
+    const allDoctors = await userDb.collection('users').find({ role: 'doctor' }).toArray();
+    console.log(`Found ${allDoctors.length} doctors total in user_db.`);
 
     let recoveredCount = 0;
 
@@ -32,10 +32,11 @@ async function recoverDoctors() {
           firstName: doc.firstName || 'Unknown',
           lastName: doc.lastName || 'Unknown',
           email: doc.email,
-          registrationNumber: `PENDING-RECOVERED-${userIdStr}`,
+          registrationNumber: `REC-${userIdStr.slice(-12).toUpperCase()}`,
           specialization: 'General Practice',
           consultationFee: 0,
           status: 'pending',
+          isAvailable: true,
           createdAt: new Date(),
           updatedAt: new Date()
         };

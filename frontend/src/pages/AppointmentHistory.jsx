@@ -57,7 +57,7 @@ const AppointmentHistory = () => {
         amount: order.amount,
         currency: order.currency,
         name: 'DoctorConnect',
-        description: `Consultation with Dr. ${appt.doctorName}`,
+        description: `Consultation with ${appt.doctorName?.startsWith('Dr.') ? appt.doctorName : 'Dr. ' + appt.doctorName}`,
         order_id: order.id,
         handler: async function (response) {
           try {
@@ -101,7 +101,7 @@ const AppointmentHistory = () => {
 
   const handleDownloadPrescription = async (appt) => {
     try {
-      const { data: docData } = await doctorAPI.getByUserId(appt.doctorId);
+      const { data: docData } = await doctorAPI.getById(appt.doctorId);
       const fullDoctor = docData.doctor;
       generatePrescriptionPDF(fullDoctor, { name: appt.patientName }, appt.prescription);
     } catch (error) {
@@ -152,7 +152,7 @@ const AppointmentHistory = () => {
                     }
                   </div>
                   <div className="history-info">
-                    <h3>{user.role === 'doctor' ? appt.patientName : `Dr. ${appt.doctorName}`}</h3>
+                    <h3>{user.role === 'doctor' ? appt.patientName : (appt.doctorName?.startsWith('Dr.') ? appt.doctorName : `Dr. ${appt.doctorName}`)}</h3>
                     <p className="history-type" style={{textTransform: 'capitalize'}}>
                       {appt.type} {appt.doctorSpecialization ? `• ${appt.doctorSpecialization}` : ''}
                       <span className={`method-badge ${appt.consultationType === 'online' ? 'online' : 'offline'}`} style={{marginLeft: '0.5rem'}}>

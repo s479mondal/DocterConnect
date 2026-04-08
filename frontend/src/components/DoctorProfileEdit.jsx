@@ -180,8 +180,14 @@ const DoctorProfileEdit = ({ profile, onUpdate }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await doctorAPI.update(profile._id, formData);
-      toast.success('Professional profile updated! ✨');
+      if (profile?._id) {
+        await doctorAPI.update(profile._id, formData);
+        toast.success('Professional profile updated! ✨');
+      } else {
+        // Fallback for cases where auto-generation failed
+        await doctorAPI.create(formData);
+        toast.success('Professional profile initialized! ✨');
+      }
       if (onUpdate) onUpdate();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to update profile');

@@ -66,6 +66,24 @@
   height: 100%;
   background: #000;
   position: relative;
+  overflow: hidden;
+}
+
+.jitsi-container-target {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-section iframe {
+  border: none !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .prescription-section {
@@ -73,12 +91,38 @@
   overflow-y: auto;
   border-left: 1px solid var(--border);
   padding: 1.5rem;
-  border-radius: 0 !important;
-  background: rgba(255, 255, 255, 0.01);
+  background: #111827 !important; /* Explicit Dark Background */
+  color: #f3f4f6 !important;     /* Explicit Light Text */
+  min-width: 450px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Custom Scrollbar for the sidebar */
+.prescription-section::-webkit-scrollbar {
+  width: 6px;
+}
+.prescription-section::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .prescription-header {
   margin-bottom: 1.5rem;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.draft-indicator {
+  font-size: 0.75rem;
+  color: #fbbf24;
+  font-style: italic;
+  font-weight: 500;
 }
 
 .prescription-header h3 {
@@ -93,6 +137,37 @@
 .prescription-header p {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.offline-tools {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+  text-decoration: underline;
+}
+
+.btn-link:hover {
+  opacity: 0.8;
+}
+
+.btn-link.text-danger {
+  color: var(--danger);
+  text-decoration: none;
 }
 
 .medicines-header {
@@ -184,6 +259,81 @@
   gap: 10px;
 }
 
+/* Join Lobby Styles */
+.join-lobby {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1f2937 0%, #111827 100%);
+  z-index: 5;
+}
+
+.lobby-content {
+  text-align: center;
+  padding: 3rem;
+  max-width: 450px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.lobby-icon {
+  font-size: 3.5rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.lobby-content h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.lobby-details {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.lobby-details p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.lobby-details strong {
+  color: var(--primary-light);
+}
+
+.btn-join {
+  width: 100%;
+  padding: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+.lobby-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 /* Patient Views */
 .patient-waiting-notice {
   position: absolute;
@@ -247,14 +397,57 @@
   to { opacity: 1; transform: scale(1); }
 }
 
+.prescription-section.readonly-mode {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.prescription-completed-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.success-banner {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.readonly-content h4 {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.readonly-content p {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 @media (max-width: 1024px) {
   .room-content.split-view {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr auto;
   }
   
   .prescription-section {
+    min-width: 100%;
     border-left: none;
     border-top: 1px solid var(--border);
+    max-height: 50vh;
   }
 }
