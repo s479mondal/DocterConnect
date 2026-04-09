@@ -32,7 +32,8 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    trim: true
+    trim: true,
+    match: [/^[6-9]{2}\d{8}$/, 'Invalid phone number. Must be 10 digits starting with 6-9']
   },
   dateOfBirth: {
     type: Date

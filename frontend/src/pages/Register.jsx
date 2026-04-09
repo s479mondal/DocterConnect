@@ -28,6 +28,13 @@ const Register = () => {
       return;
     }
 
+    // Phone number validation
+    const phoneRegex = /^[6-9]{2}\d{8}$/;
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      toast.error('Invalid phone number. Must be 10 digits starting with 6, 7, 8, or 9');
+      return;
+    }
+
     // Doctor registration number validation
     if (formData.role === 'doctor') {
       const regRegex = /^[A-Z0-9-]{3,40}$/i;

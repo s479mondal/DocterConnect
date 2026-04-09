@@ -31,6 +31,14 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Validate phone number (10 digits, first two are 6-9)
+    const phoneRegex = /^[6-9]{2}\d{8}$/;
+    if (phone && !phoneRegex.test(phone)) {
+      return res.status(400).json({
+        error: 'Invalid phone number. Must be 10 digits and start with 6, 7, 8, or 9 (e.g., 98XXXXXXXX)'
+      });
+    }
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
