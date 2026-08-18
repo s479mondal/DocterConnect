@@ -15,6 +15,7 @@ router.patch('/admin/:id/verify', doctorController.verifyDoctor);
 router.get('/:id', doctorController.getDoctorById);
 
 // Protected routes (auth handled by gateway)
+router.post('/pending-sync', doctorController.syncPendingDoctor);
 router.post('/', doctorController.createDoctor);
 router.put('/:id', doctorController.updateDoctor);
 

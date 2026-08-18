@@ -5,9 +5,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Connect to user_db
-const userDB = mongoose.createConnection(process.env.MONGODB_URI || 'mongodb://localhost:27017/user_db');
+const userDB = mongoose.createConnection(process.env.MONGODB_URI || 'mongodb://admin:admin123@localhost:27017/user_db?authSource=admin');
 // Connect to doctor_db
-const doctorDB = mongoose.createConnection(process.env.MONGODB_URI_DOCTOR || 'mongodb://localhost:27017/doctor_db');
+const doctorDB = mongoose.createConnection(process.env.MONGODB_URI_DOCTOR || 'mongodb://admin:admin123@localhost:27017/doctor_db?authSource=admin');
 
 // User Schema (same as model)
 const userSchema = new mongoose.Schema({
@@ -40,6 +40,7 @@ const seedData = async () => {
 
     // Create users
     const users = await User.insertMany([
+      { email: 'admin@demo.com', password: hashedPassword, firstName: 'System', lastName: 'Administrator', role: 'admin', phone: '+91-9876543200', gender: 'male' },
       { email: 'patient1@demo.com', password: hashedPassword, firstName: 'Rahul', lastName: 'Sharma', role: 'patient', phone: '+91-9876543210', gender: 'male' },
       { email: 'patient2@demo.com', password: hashedPassword, firstName: 'Priya', lastName: 'Patel', role: 'patient', phone: '+91-9876543211', gender: 'female' },
       { email: 'dr.kumar@demo.com', password: hashedPassword, firstName: 'Arun', lastName: 'Kumar', role: 'doctor', phone: '+91-9876543212', gender: 'male' },
@@ -61,6 +62,9 @@ const seedData = async () => {
       { day: 'saturday', startTime: '10:00', endTime: '14:00', isAvailable: true },
     ];
 
+    // Drop indexes to clear any duplicate registrationNumber constraint
+    await Doctor.collection.dropIndexes().catch(() => {});
+
     // Create doctors
     const doctorUsers = users.filter(u => u.role === 'doctor');
     const specializations = [
@@ -79,6 +83,7 @@ const seedData = async () => {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        registrationNumber: `REG-${1000 + i}`,
         specialization: specializations[i].spec,
         qualifications: [
           { degree: 'MBBS', institution: 'AIIMS Delhi', year: 2005 + i },
@@ -105,6 +110,7 @@ const seedData = async () => {
     console.log(`✅ Created ${doctors.length} doctor profiles`);
     console.log('\n🎉 Seed completed successfully!');
     console.log('\n📋 Demo Accounts:');
+    console.log('   Admin:   admin@demo.com / password123');
     console.log('   Patient: patient1@demo.com / password123');
     console.log('   Patient: patient2@demo.com / password123');
     console.log('   Doctor:  dr.kumar@demo.com / password123');

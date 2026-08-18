@@ -1,3 +1,4 @@
+try { require('dns').setServers(['8.8.8.8', '8.8.4.4']); } catch (_) {}
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');

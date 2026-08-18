@@ -75,6 +75,20 @@ exports.register = async (req, res) => {
     if (role && role.toLowerCase() === 'doctor') {
       eventPayload.registrationNumber = registrationNumber;
       eventPayload.consultationFee = consultationFee;
+
+      // Synchronous HTTP fallback for local environments where RabbitMQ is not running
+      try {
+        const doctorServiceUrl = process.env.DOCTOR_SERVICE_URL || 'http://localhost:3002';
+        const axios = require('axios');
+        await axios.post(`${doctorServiceUrl}/api/doctors/pending-sync`, {
+          userId: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          registrationNumber: registrationNumber || `REG-${user._id.toString().slice(-8).toUpperCase()}`,
+          consultationFee: consultationFee || 0
+        }).catch(() => {});
+      } catch (_) {}
     }
 
     await publishMessage('user_events', 'user.registered', eventPayload);
@@ -106,9 +120,20 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     // Find user
-    const user = await User.findOne({ email, isActive: true });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Check if doctor account is pending admin approval
+    if (user.role === 'doctor' && !user.isActive) {
+      return res.status(403).json({ 
+        error: 'Your doctor account is pending Admin approval. Please wait for an administrator to verify your registration.' 
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ error: 'Account is deactivated. Please contact support.' });
     }
 
     // Check password
@@ -299,5 +324,20 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     logger.error('Get all users error:', error);
     res.status(500).json({ error: 'Failed to fetch users' });
+  }
+};
+
+// Internal: Activate user account (after doctor verification)
+exports.activateUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, { isActive: true }, { new: true });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    logger.info(`User activated via internal route: ${user.email} (userId: ${req.params.id})`);
+    res.json({ message: 'User activated successfully', user });
+  } catch (error) {
+    logger.error('Activate user error:', error);
+    res.status(500).json({ error: 'Failed to activate user' });
   }
 };

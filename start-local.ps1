@@ -25,7 +25,7 @@ Set-Content -Path "services\user-service\.env" -Value $userEnv
 $doctorEnv = @"
 PORT=3002
 MONGODB_URI=mongodb://localhost:27017/doctor_db
-REDIS_URL=redis://localhost:6379
+REDIS_URL=rediss://default:gQAAAAAAAbdQAAIgcDExNWYyNjY3MjkwMGU0M2MzOTM1Zjk2OTIwMDE3MDUzYg@central-cowbird-112464.upstash.io:6379
 RABBITMQ_URL=amqp://localhost:5672
 "@
 Set-Content -Path "services\doctor-service\.env" -Value $doctorEnv
@@ -35,9 +35,11 @@ $appointmentEnv = @"
 PORT=3003
 MONGODB_URI=mongodb://localhost:27017/appointment_db
 RABBITMQ_URL=amqp://localhost:5672
-REDIS_URL=redis://localhost:6379
+REDIS_URL=rediss://default:gQAAAAAAAbdQAAIgcDExNWYyNjY3MjkwMGU0M2MzOTM1Zjk2OTIwMDE3MDUzYg@central-cowbird-112464.upstash.io:6379
 DOCTOR_SERVICE_URL=http://localhost:3002
 USER_SERVICE_URL=http://localhost:3001
+RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
+RAZORPAY_KEY_SECRET=eU3taZ4ADVpI3HT3sfnjRfvf
 "@
 Set-Content -Path "services\appointment-service\.env" -Value $appointmentEnv
 
@@ -51,17 +53,21 @@ Set-Content -Path "services\notification-service\.env" -Value $notificationEnv
 # 6. Frontend
 $frontendEnv = @"
 VITE_API_BASE_URL=http://localhost:3000/api
+VITE_RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
 "@
 Set-Content -Path "frontend\.env" -Value $frontendEnv
 
 
+Write-Host "Starting In-Memory MongoDB Server..."
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; Write-Host '--- MONGODB SERVER ---'; node start-mongo.js`""
+
 Write-Host "Starting services in separate terminal windows..."
 
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd api-gateway; Write-Host '--- API GATEWAY ---'; npm install; npm run dev`""
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd services\user-service; Write-Host '--- USER SERVICE ---'; npm install; npm run dev`""
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd services\doctor-service; Write-Host '--- DOCTOR SERVICE ---'; npm install; npm run dev`""
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd services\appointment-service; Write-Host '--- APPOINTMENT SERVICE ---'; npm install; npm run dev`""
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd services\notification-service; Write-Host '--- NOTIFICATION SERVICE ---'; npm install; npm run dev`""
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd frontend; Write-Host '--- FRONTEND ---'; npm install; npm run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd api-gateway; Write-Host '--- API GATEWAY ---'; npm.cmd install; npm.cmd run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd services\user-service; Write-Host '--- USER SERVICE ---'; npm.cmd install; npm.cmd run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd services\doctor-service; Write-Host '--- DOCTOR SERVICE ---'; npm.cmd install; npm.cmd run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd services\appointment-service; Write-Host '--- APPOINTMENT SERVICE ---'; npm.cmd install; npm.cmd run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd services\notification-service; Write-Host '--- NOTIFICATION SERVICE ---'; npm.cmd install; npm.cmd run dev`""
+Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -NoExit -Command `"Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; cd frontend; Write-Host '--- FRONTEND ---'; npm.cmd install; npm.cmd run dev`""
 
-Write-Host "All 6 terminal windows have been launched successfully!"
+Write-Host "All terminal windows have been launched successfully!"

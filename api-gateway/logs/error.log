@@ -10,3 +10,7 @@
 {"level":"error","message":"Auth error: jwt malformed","service":"api-gateway","timestamp":"2026-03-25T17:32:29.189Z"}
 {"level":"error","message":"Auth error: jwt malformed","service":"api-gateway","timestamp":"2026-03-25T17:34:09.485Z"}
 {"level":"error","message":"Auth error: jwt malformed","service":"api-gateway","timestamp":"2026-03-25T17:36:37.349Z"}
+{"level":"error","message":"[PROXY ERROR] POST /api/auth/google: ","service":"api-gateway","timestamp":"2026-07-20T18:12:42.628Z"}
+{"level":"error","message":"[PROXY ERROR] POST /api/auth/register: ","service":"api-gateway","timestamp":"2026-07-20T18:13:20.657Z"}
+{"level":"error","message":"[PROXY ERROR] GET /api/doctors/admin/unverified?page=1&limit=10: ","service":"api-gateway","timestamp":"2026-08-18T05:49:53.236Z"}
+{"level":"error","message":"[PROXY ERROR] GET /api/doctors/admin/unverified?page=1&limit=10: ","service":"api-gateway","timestamp":"2026-08-18T05:49:53.247Z"}

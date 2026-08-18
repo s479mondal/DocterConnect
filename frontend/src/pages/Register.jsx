@@ -48,8 +48,13 @@ const Register = () => {
     try {
       const { confirmPassword, ...data } = formData;
       const result = await register(data);
-      toast.success(`Welcome, ${result.user.firstName}! 🎉`);
-      navigate(result.user.role === 'doctor' ? '/doctor-dashboard' : '/dashboard');
+      if (formData.role === 'doctor') {
+        toast.success('Registration submitted! Your doctor profile is pending Admin verification. Please wait for an Admin to approve your account before logging in.', { duration: 6000 });
+        navigate('/login');
+      } else {
+        toast.success(`Welcome, ${result.user?.firstName || 'User'}! 🎉`);
+        navigate('/dashboard');
+      }
     } catch (error) {
       toast.error(error.response?.data?.error || 'Registration failed');
     } finally {

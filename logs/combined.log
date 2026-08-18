@@ -1,0 +1,10 @@
+{"level":"error","message":"FATAL: RABBITMQ_URL environment variable is required in production mode!","service":"user-service","timestamp":"2026-08-18T20:22:07.572Z"}
+{"level":"error","message":"RabbitMQ connection error:","service":"user-service","timestamp":"2026-08-18T20:22:07.575Z"}
+{"level":"error","message":"FATAL: RABBITMQ_URL environment variable is required in production mode!","service":"user-service","timestamp":"2026-08-18T20:23:27.542Z"}
+{"level":"error","message":"FATAL: RABBITMQ_URL environment variable is required in production mode!","service":"doctor-service","timestamp":"2026-08-18T20:23:27.797Z"}
+{"level":"error","message":"FATAL: RABBITMQ_URL environment variable is required in production mode!","service":"appointment-service","timestamp":"2026-08-18T20:23:27.885Z"}
+{"level":"error","message":"FATAL: RABBITMQ_URL environment variable is required in production mode!","service":"notification-service","timestamp":"2026-08-18T20:23:27.964Z"}
+{"level":"error","message":"RabbitMQ connection error:","service":"user-service","timestamp":"2026-08-18T20:23:27.545Z"}
+{"level":"error","message":"RabbitMQ connection error:","service":"doctor-service","timestamp":"2026-08-18T20:23:27.798Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T20:23:27.965Z"}
+{"level":"error","message":"RabbitMQ connection error:","service":"appointment-service","timestamp":"2026-08-18T20:23:27.887Z"}
