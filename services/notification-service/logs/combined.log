@@ -61,3 +61,46 @@
 {"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-04-03T22:08:33.725Z"}
 {"level":"error","message":"RabbitMQ connection error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"","service":"notification-service","stack":"Error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"\n    at afterStartOk (D:\\2nd Sem Full Stack and System Project\\Doc_Patient_Mgmt\\services\\notification-service\\node_modules\\amqplib\\lib\\connection.js:169:16)\n    at D:\\2nd Sem Full Stack and System Project\\Doc_Patient_Mgmt\\services\\notification-service\\node_modules\\amqplib\\lib\\connection.js:104:11\n    at Socket.recv (D:\\2nd Sem Full Stack and System Project\\Doc_Patient_Mgmt\\services\\notification-service\\node_modules\\amqplib\\lib\\connection.js:453:9)\n    at Object.onceWrapper (node:events:633:28)\n    at Socket.emit (node:events:519:28)\n    at emitReadable_ (node:internal/streams/readable:834:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:88:21)","timestamp":"2026-04-03T22:09:03.066Z"}
 {"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-04-03T22:09:03.080Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:14.934Z"}
+{"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-07-20T18:12:14.938Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:19.941Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:24.947Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:29.950Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:34.965Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:39.981Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:44.983Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:49.999Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:12:55.015Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:13:00.018Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-07-20T18:13:05.031Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:17.213Z"}
+{"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-08-18T04:51:17.220Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:22.235Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:27.251Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:32.265Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:37.270Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:42.286Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:51.730Z"}
+{"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-08-18T04:51:51.736Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:51:56.748Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:01.758Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:06.769Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:11.785Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:16.799Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:21.810Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:26.818Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:31.840Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:36.851Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T04:52:41.857Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T05:49:52.837Z"}
+{"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-08-18T05:49:52.847Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T05:53:22.015Z"}
+{"level":"info","message":"Notification Service running on port 3004","service":"notification-service","timestamp":"2026-08-18T05:53:22.022Z"}
+{"level":"warn","message":"RabbitMQ closed. Reconnecting...","service":"notification-service","timestamp":"2026-08-18T05:54:16.387Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T05:54:21.405Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T05:54:26.416Z"}
+{"level":"error","message":"❌ RabbitMQ connection failed:","service":"notification-service","timestamp":"2026-08-18T05:54:31.436Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T05:54:36.510Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T20:02:12.342Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T20:05:22.761Z"}
+{"level":"info","message":"✅ Connected to RabbitMQ","service":"notification-service","timestamp":"2026-08-18T20:21:16.354Z"}

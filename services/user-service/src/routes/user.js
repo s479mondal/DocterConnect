@@ -13,4 +13,7 @@ router.get('/admin/all', authController.getAllUsers);
 // Get user by ID (internal)
 router.get('/:id', authController.getUserById);
 
+// Internal: Activate user
+router.patch('/internal/activate/:id', authController.activateUser);
+
 module.exports = router;

@@ -320,9 +320,47 @@ exports.verifyDoctor = async (req, res) => {
       verifiedAt: new Date().toISOString()
     });
 
+    // Synchronous HTTP fallback for local environment activation
+    try {
+      const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:3001';
+      const axios = require('axios');
+      await axios.patch(`${userServiceUrl}/api/users/internal/activate/${pending.userId}`).catch(() => {});
+    } catch (_) {}
+
     res.json({ message: 'Doctor verified and moved to main database successfully', doctor });
   } catch (error) {
     logger.error('Verify doctor error:', error);
     res.status(500).json({ error: 'Failed to verify doctor' });
+  }
+};
+
+// Sync pending doctor profile from user-service
+exports.syncPendingDoctor = async (req, res) => {
+  try {
+    const { userId, firstName, lastName, email, registrationNumber, consultationFee } = req.body;
+    if (!userId || !email) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const existingPending = await PendingDoctor.findOne({ userId });
+    const existingDoctor = await Doctor.findOne({ userId });
+
+    if (!existingPending && !existingDoctor) {
+      const pending = await PendingDoctor.create({
+        userId,
+        firstName,
+        lastName,
+        email,
+        registrationNumber: registrationNumber || `REG-${userId.slice(-8).toUpperCase()}`,
+        consultationFee: consultationFee || 0
+      });
+      logger.info(`Synced pending doctor profile via HTTP: ${email}`);
+      return res.status(201).json({ message: 'Pending doctor synced successfully', pending });
+    }
+
+    res.json({ message: 'Doctor profile already exists' });
+  } catch (error) {
+    logger.error('Sync pending doctor error:', error);
+    res.status(500).json({ error: 'Failed to sync pending doctor' });
   }
 };
