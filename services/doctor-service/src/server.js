@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-app.use(cors());
+// app.use(cors()); // Disabled - CORS is handled centrally at the API Gateway
 app.use(express.json());
 app.use(morgan('dev'));
 

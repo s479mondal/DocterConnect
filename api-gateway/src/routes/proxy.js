@@ -37,7 +37,14 @@ const createProxy = (target) => {
           proxyReq.write(bodyData);
         }
       },
-      proxyRes: (proxyRes, req) => {
+      proxyRes: (proxyRes, req, res) => {
+        // Strip out duplicate or conflicting CORS headers from microservices
+        delete proxyRes.headers['access-control-allow-origin'];
+        delete proxyRes.headers['access-control-allow-credentials'];
+        delete proxyRes.headers['access-control-allow-methods'];
+        delete proxyRes.headers['access-control-allow-headers'];
+        delete proxyRes.headers['access-control-expose-headers'];
+        
         logger.info(`[PROXY] ${req.method} ${req.originalUrl} -> ${proxyRes.statusCode}`);
       },
       error: (err, req, res) => {

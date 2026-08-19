@@ -1751,3 +1751,8 @@
 {"level":"info","message":"::1 - - [03/Apr/2026:22:11:19 +0000] \"GET /api/doctors/user/69d0320b599258d7cc417ade HTTP/1.1\" 500 34 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\"","service":"api-gateway","timestamp":"2026-04-03T22:11:19.457Z"}
 {"level":"info","message":"[PROXY] POST /api/auth/login -> 500","service":"api-gateway","timestamp":"2026-04-03T22:11:24.793Z"}
 {"level":"info","message":"::1 - - [03/Apr/2026:22:11:24 +0000] \"POST /api/auth/login HTTP/1.1\" 500 24 \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\"","service":"api-gateway","timestamp":"2026-04-03T22:11:24.796Z"}
+{"level":"info","message":"API Gateway running on port 3005","service":"api-gateway","timestamp":"2026-08-19T00:17:21.422Z"}
+{"level":"info","message":"[PROXY] OPTIONS /api/auth/login -> 204","service":"api-gateway","timestamp":"2026-08-19T00:17:41.903Z"}
+{"level":"info","message":"::1 - - [19/Aug/2026:00:17:41 +0000] \"OPTIONS /api/auth/login HTTP/1.1\" 204 0 \"-\" \"node\"","service":"api-gateway","timestamp":"2026-08-19T00:17:41.907Z"}
+{"level":"info","message":"[PROXY] POST /api/auth/login -> 401","service":"api-gateway","timestamp":"2026-08-19T00:17:42.180Z"}
+{"level":"info","message":"::1 - - [19/Aug/2026:00:17:42 +0000] \"POST /api/auth/login HTTP/1.1\" 401 37 \"-\" \"node\"","service":"api-gateway","timestamp":"2026-08-19T00:17:42.190Z"}
