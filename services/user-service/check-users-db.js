@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 
 const uri = "mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/user_db?retryWrites=true&w=majority";
 
