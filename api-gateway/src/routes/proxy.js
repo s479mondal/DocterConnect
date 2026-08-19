@@ -84,10 +84,26 @@ router.delete('/doctors/:id', authMiddleware, (req, res, next) => next());
 router.use('/doctors', createProxy(DOCTOR_SERVICE));
 
 // =============================================
-// APPOINTMENT ROUTES (Auth required)
+// APPOINTMENT ROUTES (Mixed auth)
 // =============================================
+// Public / optional auth routes
+router.get('/appointments/doctor/:doctorId', optionalAuth, (req, res, next) => next());
+router.get('/appointments/slots', optionalAuth, (req, res, next) => next());
+router.get('/appointments/availability-summary', optionalAuth, (req, res, next) => next());
+router.get('/appointments/:id', optionalAuth, (req, res, next) => next());
+
+// Protected routes (Auth required)
+router.get('/appointments/patient', authMiddleware, (req, res, next) => next());
 router.get('/appointments/admin/all', authMiddleware, (req, res, next) => next());
-router.use('/appointments', authMiddleware, createProxy(APPOINTMENT_SERVICE));
+router.post('/appointments', authMiddleware, (req, res, next) => next());
+router.post('/appointments/create-order', authMiddleware, (req, res, next) => next());
+router.post('/appointments/lock', authMiddleware, (req, res, next) => next());
+router.post('/appointments/release-lock', authMiddleware, (req, res, next) => next());
+router.post('/appointments/verify-payment/:id', authMiddleware, (req, res, next) => next());
+router.patch('/appointments/:id/status', authMiddleware, (req, res, next) => next());
+router.put('/appointments/:id/prescription', authMiddleware, (req, res, next) => next());
+
+router.use('/appointments', createProxy(APPOINTMENT_SERVICE));
 
 // =============================================
 // NOTIFICATION ROUTES (Auth required)
