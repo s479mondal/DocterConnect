@@ -29,6 +29,10 @@ const Login = () => {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    if (!credentialResponse?.credential) {
+      toast.error('No credential received from Google.');
+      return;
+    }
     setLoading(true);
     try {
       const data = await googleLogin(credentialResponse.credential);
@@ -37,8 +41,8 @@ const Login = () => {
       else if (data.user.role === 'doctor') navigate('/doctor-dashboard');
       else navigate('/dashboard');
     } catch (error) {
-      toast.error('Google Sign In failed. Ensure you ran the npm installs.');
-      console.error(error);
+      toast.error(error.response?.data?.error || 'Google Sign In failed. Please try again.');
+      console.error('Google Sign In error:', error);
     } finally {
       setLoading(false);
     }
@@ -57,12 +61,16 @@ const Login = () => {
             <p>Sign in to continue your health journey</p>
           </div>
           
-          {/* New Google Authentication Button */}
+          {/* Google Authentication Button */}
           <div style={{ marginTop: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
-              onError={() => toast.error('Google authentication failed.')}
-              useOneTap
+              onError={() => toast.error('Google authentication was cancelled or failed.')}
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              width="320"
+              text="signin_with"
             />
           </div>
 
