@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
 import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
@@ -31,15 +30,15 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = useGoogleLogin({
+    flow: 'implicit',
     onSuccess: async (tokenResponse) => {
+      if (!tokenResponse?.access_token) {
+        toast.error('No access token received from Google.');
+        return;
+      }
       setGoogleLoading(true);
       try {
-        const userInfoRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-        });
-        const googleUser = userInfoRes.data;
-
-        const data = await googleLogin(tokenResponse.access_token, googleUser);
+        const data = await googleLogin(tokenResponse.access_token);
         toast.success(`Welcome, ${data.user.firstName}!`);
         if (data.user.role === 'admin') navigate('/admin-dashboard');
         else if (data.user.role === 'doctor') navigate('/doctor-dashboard');

@@ -214,43 +214,40 @@ exports.getUserById = async (req, res) => {
 // Google Login
 exports.googleLogin = async (req, res) => {
   try {
-    const { token, userInfo } = req.body;
-    let payload;
-
-    if (userInfo && userInfo.email) {
-      payload = userInfo;
-    } else if (token) {
-      try {
-        // Attempt to verify with Google as ID token
-        const ticket = await googleClient.verifyIdToken({
-          idToken: token,
-          audience: process.env.GOOGLE_CLIENT_ID,
-        });
-        payload = ticket.getPayload();
-      } catch (verifyError) {
-        // If verification as ID token fails, check if it is an OAuth2 access token
-        try {
-          const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (response.ok) {
-            payload = await response.json();
-          }
-        } catch (fetchErr) {
-          logger.warn('Failed to fetch userinfo with access token:', fetchErr.message);
-        }
-
-        // Fallback: decode raw JWT
-        if (!payload || !payload.email) {
-          payload = jwt.decode(token);
-        }
-        if (!payload || !payload.email) throw new Error('Invalid Google token');
-      }
-    } else {
-      return res.status(400).json({ error: 'Google token or user info is required' });
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ error: 'Google token is required' });
     }
 
-    const email = payload.email;
+    let payload = null;
+
+    // 1. Try to verify as Google ID token (JWT)
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (verifyError) {
+      // 2. If not an ID token, verify with Google UserInfo endpoint as OAuth2 Access Token
+      try {
+        const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok) {
+          payload = await response.json();
+        }
+      } catch (fetchErr) {
+        logger.warn('Failed to verify access token with Google API:', fetchErr.message);
+      }
+    }
+
+    // 3. Reject if Google did not authenticate/verify the token
+    if (!payload || !payload.email) {
+      return res.status(401).json({ error: 'Invalid or expired Google authentication token' });
+    }
+
+    const email = payload.email.toLowerCase();
 
     // Find or create user
     let user = await User.findOne({ email });
