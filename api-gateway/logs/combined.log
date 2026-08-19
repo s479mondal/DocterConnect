@@ -1759,3 +1759,6 @@
 {"level":"info","message":"API Gateway running on port 3005","service":"api-gateway","timestamp":"2026-08-19T00:25:22.529Z"}
 {"level":"info","message":"API Gateway running on port 3005","service":"api-gateway","timestamp":"2026-08-19T00:30:48.324Z"}
 {"level":"info","message":"API Gateway running on port 3005","service":"api-gateway","timestamp":"2026-08-19T00:38:50.302Z"}
+{"level":"info","message":"API Gateway running on port 3005","service":"api-gateway","timestamp":"2026-08-19T02:16:02.135Z"}
+{"level":"info","message":"[PROXY] GET /api/appointments/doctor/6a851036b58142831031eea6?limit=50 -> 200","service":"api-gateway","timestamp":"2026-08-19T02:16:17.093Z"}
+{"level":"info","message":"::1 - - [19/Aug/2026:02:16:17 +0000] \"GET /api/appointments/doctor/6a851036b58142831031eea6?limit=50 HTTP/1.1\" 200 - \"-\" \"curl/8.21.0\"","service":"api-gateway","timestamp":"2026-08-19T02:16:17.102Z"}
