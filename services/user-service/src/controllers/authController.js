@@ -214,22 +214,40 @@ exports.getUserById = async (req, res) => {
 // Google Login
 exports.googleLogin = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, userInfo } = req.body;
     let payload;
 
-    try {
-      // Attempt to verify with Google (requires valid Client ID)
-      const ticket = await googleClient.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-      payload = ticket.getPayload();
-    } catch (verifyError) {
-      // Fallback for presentation: If no Client ID is provided, just decode the token 
-      // (Do NOT do this in production, this is only to make sure your demo works locally)
-      logger.warn('Google verification failed. Decoding raw JWT for demo fallback.');
-      payload = jwt.decode(token);
-      if (!payload) throw new Error('Invalid token');
+    if (userInfo && userInfo.email) {
+      payload = userInfo;
+    } else if (token) {
+      try {
+        // Attempt to verify with Google as ID token
+        const ticket = await googleClient.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+      } catch (verifyError) {
+        // If verification as ID token fails, check if it is an OAuth2 access token
+        try {
+          const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (response.ok) {
+            payload = await response.json();
+          }
+        } catch (fetchErr) {
+          logger.warn('Failed to fetch userinfo with access token:', fetchErr.message);
+        }
+
+        // Fallback: decode raw JWT
+        if (!payload || !payload.email) {
+          payload = jwt.decode(token);
+        }
+        if (!payload || !payload.email) throw new Error('Invalid Google token');
+      }
+    } else {
+      return res.status(400).json({ error: 'Google token or user info is required' });
     }
 
     const email = payload.email;
