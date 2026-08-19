@@ -66,6 +66,9 @@ const Login = () => {
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => toast.error('Google authentication was cancelled or failed.')}
+              use_fedcm_for_prompt={false}
+              use_fedcm_for_button={false}
+              auto_select={false}
               theme="outline"
               size="large"
               shape="rectangular"
