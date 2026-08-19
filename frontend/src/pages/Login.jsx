@@ -56,6 +56,11 @@ const Login = () => {
     }
   });
 
+  const handleGoogleClick = () => {
+    console.log('Google button clicked');
+    handleGoogleSignIn();
+  };
+
   return (
     <div className="auth-page">
       <div className="auth-bg">
@@ -73,7 +78,7 @@ const Login = () => {
           <div style={{ marginTop: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
             <button
               type="button"
-              onClick={() => handleGoogleSignIn()}
+              onClick={handleGoogleClick}
               disabled={googleLoading || loading}
               style={{
                 width: '100%',
