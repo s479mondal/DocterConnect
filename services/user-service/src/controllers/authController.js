@@ -60,8 +60,8 @@ exports.register = async (req, res) => {
 
     await user.save();
 
-    // Generate token
-    const token = generateToken(user);
+    // Generate token only if account is active (patients are active, doctors are pending admin approval)
+    const token = user.isActive ? generateToken(user) : null;
 
     // Publish user registered event
     const eventPayload = {
@@ -91,7 +91,8 @@ exports.register = async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role
+        role: user.role,
+        isActive: user.isActive
       }
     });
   } catch (error) {
@@ -105,8 +106,8 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
-    const user = await User.findOne({ email, isActive: true });
+    // Find user by email
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -115,6 +116,15 @@ exports.login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Check if account is active / verified by admin
+    if (!user.isActive) {
+      return res.status(403).json({
+        error: user.role === 'doctor'
+          ? 'Your doctor account is pending admin approval. You can log in once verified.'
+          : 'Your account is inactive. Please contact support.'
+      });
     }
 
     // Update last login (use updateOne to avoid triggering pre-save password hash)
