@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
-import { useGoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
 import './Auth.css';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '944194852199-vmirp11bvijbd7fsdp33a3t879uqqfo6.apps.googleusercontent.com';
 
 const Login = () => {
   const { login, googleLogin } = useAuth();
@@ -12,6 +13,34 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  // Handle Google OAuth Redirect Response (#access_token=...)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token=')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      if (accessToken) {
+        // Clean URL hash
+        window.history.replaceState(null, null, window.location.pathname);
+        setGoogleLoading(true);
+        googleLogin(accessToken)
+          .then((data) => {
+            toast.success(`Welcome, ${data.user.firstName}!`);
+            if (data.user.role === 'admin') navigate('/admin-dashboard');
+            else if (data.user.role === 'doctor') navigate('/doctor-dashboard');
+            else navigate('/dashboard');
+          })
+          .catch((error) => {
+            toast.error(error.response?.data?.error || 'Google Sign In failed. Please try again.');
+            console.error('Google Sign In error:', error);
+          })
+          .finally(() => {
+            setGoogleLoading(false);
+          });
+      }
+    }
+  }, [googleLogin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,36 +58,11 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSignIn = useGoogleLogin({
-    flow: 'implicit',
-    onSuccess: async (tokenResponse) => {
-      if (!tokenResponse?.access_token) {
-        toast.error('No access token received from Google.');
-        return;
-      }
-      setGoogleLoading(true);
-      try {
-        const data = await googleLogin(tokenResponse.access_token);
-        toast.success(`Welcome, ${data.user.firstName}!`);
-        if (data.user.role === 'admin') navigate('/admin-dashboard');
-        else if (data.user.role === 'doctor') navigate('/doctor-dashboard');
-        else navigate('/dashboard');
-      } catch (error) {
-        toast.error(error.response?.data?.error || 'Google Sign In failed. Please try again.');
-        console.error('Google Sign In error:', error);
-      } finally {
-        setGoogleLoading(false);
-      }
-    },
-    onError: (error) => {
-      toast.error('Google authentication was cancelled or failed.');
-      console.error('Google OAuth error:', error);
-    }
-  });
-
   const handleGoogleClick = () => {
-    console.log('Google button clicked');
-    handleGoogleSignIn();
+    setGoogleLoading(true);
+    const redirectUri = window.location.origin + '/login';
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=openid%20email%20profile&prompt=select_account`;
+    window.location.href = authUrl;
   };
 
   return (
