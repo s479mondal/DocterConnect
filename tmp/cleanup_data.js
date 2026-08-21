@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { createClient } = require('redis');
 
 const URIs = {
-  user: 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/user_db?retryWrites=true&w=majority',
-  doctor: 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/doctor_db?retryWrites=true&w=majority',
-  appointment: 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/appointment_db?retryWrites=true&w=majority'
+  user: process.env.MONGODB_URI_USER || 'mongodb://localhost:27017/user_db',
+  doctor: process.env.MONGODB_URI_DOCTOR || 'mongodb://localhost:27017/doctor_db',
+  appointment: process.env.MONGODB_URI_APPOINTMENT || 'mongodb://localhost:27017/appointment_db'
 };
 
 const redisUrl = 'redis://localhost:6379';

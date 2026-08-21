@@ -64,8 +64,8 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
-      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/user_db?retryWrites=true&w=majority
-      - JWT_SECRET=dpm_jwt_secret_key_2024
+      - MONGODB_URI=${MONGODB_URI_USER:-mongodb://mongodb:27017/user_db}
+      - JWT_SECRET=${JWT_SECRET:-dpm_jwt_secret_key_2024}
       - JWT_EXPIRES_IN=7d
       - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
     depends_on:
@@ -81,7 +81,7 @@ services:
       - "3002:3002"
     environment:
       - PORT=3002
-      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/doctor_db?retryWrites=true&w=majority
+      - MONGODB_URI=${MONGODB_URI_DOCTOR:-mongodb://mongodb:27017/doctor_db}
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
     depends_on:
@@ -98,13 +98,13 @@ services:
       - "3003:3003"
     environment:
       - PORT=3003
-      - MONGODB_URI=mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/appointment_db?retryWrites=true&w=majority
+      - MONGODB_URI=${MONGODB_URI_APPOINTMENT:-mongodb://mongodb:27017/appointment_db}
       - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
       - REDIS_URL=redis://redis:6379
       - DOCTOR_SERVICE_URL=http://doctor-service:3002
       - USER_SERVICE_URL=http://user-service:3001
-      - RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
-      - RAZORPAY_KEY_SECRET=eU3taZ4ADVpI3HT3sfnjRfvf
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-rzp_test_key}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-your_razorpay_secret}
     depends_on:
       - mongodb
       - rabbitmq
@@ -121,10 +121,10 @@ services:
     environment:
       - PORT=3004
       - RABBITMQ_URL=amqp://admin:admin123@rabbitmq:5672
-      - SMTP_HOST=smtp.gmail.com
-      - SMTP_PORT=587
-      - SMTP_USER=soumenmondal741150@gmail.com
-      - SMTP_PASS=qwdwsgvvgejcgijm
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-your_email@gmail.com}
+      - SMTP_PASS=${SMTP_PASS:-your_app_password}
     depends_on:
       - rabbitmq
     networks:
@@ -138,7 +138,7 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_BASE_URL=http://localhost:3000/api
-      - VITE_RAZORPAY_KEY_ID=rzp_test_SZ9vgZQjij4g7j
+      - VITE_RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-rzp_test_key}
     depends_on:
       - api-gateway
     networks:

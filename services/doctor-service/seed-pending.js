@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const uri = 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/doctor_db?retryWrites=true&w=majority';
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/doctor_db';
 
 const doctorSchema = new mongoose.Schema({
   userId: String,

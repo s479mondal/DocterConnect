@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/appointment_db?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/appointment_db";
 
 async function dropBrokenIndex() {
   try {

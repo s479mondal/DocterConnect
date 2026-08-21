@@ -3,7 +3,7 @@ const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
 
 
-const uri = "mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/user_db?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/user_db";
 
 async function run() {
   await mongoose.connect(uri);

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Configuration
-const ATLAS_URI = 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/';
+const ATLAS_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 
 // Schemas (simplified for testing)
 const userSchema = new mongoose.Schema({

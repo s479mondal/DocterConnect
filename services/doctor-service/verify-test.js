@@ -2,7 +2,7 @@ const https = require('https');
 const http = require('http');
 const mongoose = require('mongoose');
 
-const ATLAS_URI = 'mongodb+srv://soumenmondal741150_db_user:SoumenDa123@cluster0.982qcmr.mongodb.net/';
+const ATLAS_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 // Inside Docker, we talk to the gateway or service directly. 
 // Using the service name 'api-gateway' inside the docket network.
 const GATEWAY_URL = 'http://api-gateway:3000/api';
