@@ -13,6 +13,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable trust proxy for Render / reverse proxies so rate-limit uses real client IPs
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -43,11 +46,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Rate limiting
+// Rate limiting (Skipping /warmup and /health)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Increased for local development to avoid hitting the cap easily
-  message: { error: 'Too many requests, please try again later.' }
+  max: 2000, // Generous limit per individual client IP
+  skip: (req) => req.path === '/warmup' || req.path === '/health',
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+  validate: { xForwardedForHeader: false }
 });
 app.use('/api/', limiter);
 
