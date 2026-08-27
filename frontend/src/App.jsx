@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
+import { warmupServers } from './services/api';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -24,6 +26,11 @@ const ProtectedRoute = ({ children, roles }) => {
 };
 
 function App() {
+  useEffect(() => {
+    // Silently pre-warm all Render microservices in the background on website visit
+    warmupServers();
+  }, []);
+
   return (
     <div className="app">
       <Navbar />

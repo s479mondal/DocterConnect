@@ -5,8 +5,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 15000
+  timeout: 60000 // 60s to accommodate Render free tier cold starts
 });
+
+// Warmup helper to asynchronously wake up all backend services on app mount
+export const warmupServers = () => {
+  return axios.get(`${API_BASE_URL}/warmup`, { timeout: 35000 }).catch(() => {
+    // Non-blocking silent background catch
+  });
+};
 
 // Request interceptor - attach JWT
 api.interceptors.request.use((config) => {
@@ -17,10 +24,20 @@ api.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
-// Response interceptor - handle errors
+// Response interceptor - handle errors and auto-retry on Render cold starts (502/503/504)
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config;
+    
+    // If it's a 502/503/504 (gateway waiting for waking microservice) and not retried yet
+    if (error.response && [502, 503, 504].includes(error.response.status) && config && !config._retry) {
+      config._retry = true;
+      // Wait 3 seconds for downstream container to boot, then retry once
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      return api(config);
+    }
+
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

@@ -63,6 +63,34 @@ app.get('/health', (req, res) => {
   res.json({ status: 'API Gateway is running', timestamp: new Date().toISOString() });
 });
 
+// Warmup endpoint to wake up all downstream Render microservices in parallel
+app.get('/api/warmup', async (req, res) => {
+  const services = [
+    { name: 'user-service', url: `${process.env.USER_SERVICE_URL || 'http://localhost:3001'}/health` },
+    { name: 'doctor-service', url: `${process.env.DOCTOR_SERVICE_URL || 'http://localhost:3002'}/health` },
+    { name: 'appointment-service', url: `${process.env.APPOINTMENT_SERVICE_URL || 'http://localhost:3003'}/health` },
+    { name: 'notification-service', url: `${process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3004'}/health` },
+  ];
+
+  const results = await Promise.allSettled(
+    services.map(async (s) => {
+      try {
+        const response = await fetch(s.url, { signal: AbortSignal.timeout(25000) });
+        return { name: s.name, status: response.ok ? 'awake' : 'starting', statusCode: response.status };
+      } catch (err) {
+        return { name: s.name, status: 'waking_up', error: err.message };
+      }
+    })
+  );
+
+  res.json({
+    status: 'Warmup initiated',
+    gateway: 'awake',
+    timestamp: new Date().toISOString(),
+    services: results.map((r, i) => r.value || { name: services[i].name, status: 'waking_up' })
+  });
+});
+
 // Proxy routes to microservices
 app.use('/api', proxyRoutes);
 

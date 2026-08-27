@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiMail, FiLock, FiUser, FiPhone, FiArrowRight } from 'react-icons/fi';
@@ -13,6 +13,20 @@ const Register = () => {
     role: 'patient', phone: '', gender: 'male', registrationNumber: '', consultationFee: 0
   });
   const [loading, setLoading] = useState(false);
+  const [coldStartNotice, setColdStartNotice] = useState(false);
+
+  // Monitor loading time to display friendly server wake-up notice for Render cold starts
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setColdStartNotice(true);
+      }, 2500);
+    } else {
+      setColdStartNotice(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,6 +191,24 @@ const Register = () => {
                 </div>
               </div>
             </div>
+
+            {coldStartNotice && (
+              <div style={{
+                padding: '10px 14px',
+                marginBottom: '15px',
+                backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                border: '1px solid rgba(59, 130, 246, 0.35)',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#93c5fd',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span>⚡</span>
+                <span>Connecting & waking up cloud server (Render free tier)... Please wait a moment.</span>
+              </div>
+            )}
 
             <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={loading}>
               {loading ? <span className="spinner" style={{width: 20, height: 20}}></span> : <>Create Account <FiArrowRight /></>}
