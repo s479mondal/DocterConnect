@@ -46,17 +46,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Rate limiting (Skipping /warmup and /health)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2000, // Generous limit per individual client IP
-  skip: (req) => req.path === '/warmup' || req.path === '/health',
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many requests, please try again later.' },
-  validate: { xForwardedForHeader: false }
-});
-app.use('/api/', limiter);
+// Rate limiting - disabled for Render cloud hosting to avoid 429 false positives
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 5000,
+//   message: { error: 'Too many requests, please try again later.' }
+// });
+// app.use('/api/', limiter);
 
 // Logging
 app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
@@ -71,7 +67,7 @@ app.get('/health', (req, res) => {
 });
 
 // Warmup endpoint to wake up all downstream Render microservices in parallel
-app.get('/api/warmup', async (req, res) => {
+const handleWarmup = async (req, res) => {
   const services = [
     { name: 'user-service', url: `${process.env.USER_SERVICE_URL || 'http://localhost:3001'}/health` },
     { name: 'doctor-service', url: `${process.env.DOCTOR_SERVICE_URL || 'http://localhost:3002'}/health` },
@@ -96,7 +92,10 @@ app.get('/api/warmup', async (req, res) => {
     timestamp: new Date().toISOString(),
     services: results.map((r, i) => r.value || { name: services[i].name, status: 'waking_up' })
   });
-});
+};
+
+app.get('/warmup', handleWarmup);
+app.get('/api/warmup', handleWarmup);
 
 // Proxy routes to microservices
 app.use('/api', proxyRoutes);
