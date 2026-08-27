@@ -46,20 +46,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Rate limiting - restored with trust proxy to prevent false 429s from load balancers
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5000,
-  message: { error: 'Too many requests, please try again later.' }
-});
+// Rate limiting - disabled for debugging to isolate 429 source
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 5000,
+//   message: { error: 'Too many requests, please try again later.' }
+// });
 
 // Apply rate limiter to all /api routes EXCEPT /api/warmup
-app.use('/api/', (req, res, next) => {
-  if (req.path === '/warmup') {
-    return next();
-  }
-  return limiter(req, res, next);
-});
+// app.use('/api/', (req, res, next) => {
+//   if (req.path === '/warmup') {
+//     return next();
+//   }
+//   return limiter(req, res, next);
+// });
 
 // Logging
 app.use(morgan('combined', { stream: { write: (msg) => logger.info(msg.trim()) } }));
