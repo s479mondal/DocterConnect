@@ -8,8 +8,12 @@ const api = axios.create({
   timeout: 60000 // 60s to accommodate Render free tier cold starts
 });
 
+let isWarmupInitiated = false;
+
 // Warmup helper to asynchronously wake up all backend services on app mount
 export const warmupServers = () => {
+  if (isWarmupInitiated) return Promise.resolve();
+  isWarmupInitiated = true;
   return axios.get(`${API_BASE_URL}/warmup`, { timeout: 35000 }).catch(() => {
     // Non-blocking silent background catch
   });
@@ -24,14 +28,14 @@ api.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
-// Response interceptor - handle errors and auto-retry on Render cold starts (502/503/504)
+// Response interceptor - handle errors and auto-retry on Render cold starts (502/503/504/429)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const config = error.config;
     
-    // If it's a 502/503/504 (gateway waiting for waking microservice) and not retried yet
-    if (error.response && [502, 503, 504].includes(error.response.status) && config && !config._retry) {
+    // If it's a 502/503/504 (gateway waiting for waking microservice) or 429 (Render platform cold start block) and not retried yet
+    if (error.response && [502, 503, 504, 429].includes(error.response.status) && config && !config._retry) {
       config._retry = true;
       // Wait 3 seconds for downstream container to boot, then retry once
       await new Promise((resolve) => setTimeout(resolve, 3000));
